@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 import { User } from './schemas/user.schema'
 import { UserService } from './user.service'
 
@@ -6,10 +6,8 @@ import { UserService } from './user.service'
 export class UserController {
   constructor(private userService: UserService) {}
 
-  //create route get all user with mongoose call service
   @Get()
-  async getAllUser(@Req() req: any): Promise<User[]> {
-    console.log(req.user)
+  async getAllUser(): Promise<User[]> {
     return await this.userService.getAllUser()
   }
 }
