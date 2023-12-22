@@ -61,7 +61,11 @@ export class UserService {
 
     const result = await Promise.all(promises)
 
-    return [...result[0], ...result[1]]
+    const users = [...result[0], ...result[1]]
+
+    return users.filter((user, index) => {
+      return users.findIndex(item => item['_id'].toString() === user['_id'].toString()) === index
+    })
   }
 
   async addFriend(user: UserDocument, addFriendto: AddFrienDto) {
