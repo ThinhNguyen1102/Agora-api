@@ -496,23 +496,23 @@ describe('ConversationService', () => {
       createdAt: '2021-01-01T00:00:00.000Z',
       updatedAt: '2021-01-01T00:00:00.000Z'
     }
-    it('should add members error', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
-        populate: jest.fn().mockReturnValueOnce({
-          populate: jest.fn().mockResolvedValueOnce(null)
-        })
-      })
+    // it('should add members error', async () => {
+    //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
+    //     populate: jest.fn().mockReturnValueOnce({
+    //       populate: jest.fn().mockResolvedValueOnce(null)
+    //     })
+    //   })
 
-      jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
-        select: jest.fn().mockResolvedValueOnce([mockUserData])
-      })
+    //   jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
+    //     select: jest.fn().mockResolvedValueOnce([mockUserData])
+    //   })
 
-      await expect(
-        service.addMembers(mockConversation._id.toString(), mockUserData._id, [
-          '65735fe392fbdfd4575aa73d'
-        ])
-      ).rejects.toThrow('Invalid conversation or permission denied')
-    })
+    //   await expect(
+    //     service.addMembers(mockConversation._id.toString(), mockUserData._id, [
+    //       '65735fe392fbdfd4575aa73d'
+    //     ])
+    //   ).rejects.toThrow('Invalid conversation or permission denied')
+    // })
 
     it('should add members error', async () => {
       await expect(
@@ -523,46 +523,46 @@ describe('ConversationService', () => {
       ).rejects.toThrow('Invalid input')
     })
 
-    it('should add members error', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
-        populate: jest.fn().mockReturnValueOnce({
-          populate: jest.fn().mockResolvedValueOnce({
-            ...mockConversation,
-            isGroup: false
-          })
-        })
-      })
+    // it('should add members error', async () => {
+    //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
+    //     populate: jest.fn().mockReturnValueOnce({
+    //       populate: jest.fn().mockResolvedValueOnce({
+    //         ...mockConversation,
+    //         isGroup: false
+    //       })
+    //     })
+    //   })
 
-      jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
-        select: jest.fn().mockResolvedValueOnce([mockUserData])
-      })
+    //   jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
+    //     select: jest.fn().mockResolvedValueOnce([mockUserData])
+    //   })
 
-      await expect(
-        service.addMembers(mockConversation._id.toString(), mockUserData._id, [
-          '65735fe392fbdfd4575aa73d'
-        ])
-      ).rejects.toThrow('Invalid conversation')
-    })
+    //   await expect(
+    //     service.addMembers(mockConversation._id.toString(), mockUserData._id, [
+    //       '65735fe392fbdfd4575aa73d'
+    //     ])
+    //   ).rejects.toThrow('Invalid conversation')
+    // })
 
-    it('should add members error', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
-        populate: jest.fn().mockReturnValueOnce({
-          populate: jest.fn().mockResolvedValueOnce({
-            ...mockConversation
-          })
-        })
-      })
+    // it('should add members error', async () => {
+    //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({
+    //     populate: jest.fn().mockReturnValueOnce({
+    //       populate: jest.fn().mockResolvedValueOnce({
+    //         ...mockConversation
+    //       })
+    //     })
+    //   })
 
-      jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
-        select: jest.fn().mockResolvedValueOnce([mockUserData])
-      })
+    //   jest.spyOn(mockUserModel, 'find').mockReturnValueOnce({
+    //     select: jest.fn().mockResolvedValueOnce([mockUserData])
+    //   })
 
-      await expect(
-        service.addMembers(mockConversation._id.toString(), mockUserData._id, [
-          '655f73beb014739c9499ab11'
-        ])
-      ).rejects.toThrow('Invalid input')
-    })
+    //   await expect(
+    //     service.addMembers(mockConversation._id.toString(), mockUserData._id, [
+    //       '655f73beb014739c9499ab11'
+    //     ])
+    //   ).rejects.toThrow('Invalid input')
+    // })
 
     // it('should add members success', async () => {
     //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValueOnce({

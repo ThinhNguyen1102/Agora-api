@@ -9,6 +9,8 @@ import { CloudinaryService, ImageType } from 'src/cloudinary/cloudinary.service'
 import { CreateConvDto, UpdateInfoConvDto } from './dto'
 import { MessageService } from 'src/message/message.service'
 
+const DEFAULT_LIMIT = 20
+
 @Injectable()
 export class ConversationService {
   constructor(
@@ -98,7 +100,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: 50,
+          limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
@@ -109,7 +111,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: 50,
+          limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
@@ -132,7 +134,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: 50,
+          limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
@@ -143,7 +145,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: 50,
+          limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
@@ -316,10 +318,11 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: 50,
+          limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
+      .lean()
 
     const members = await this.userModel
       .find({
@@ -348,9 +351,16 @@ export class ConversationService {
 
     conversation.members = [...conversation.members, ...members]
 
-    await conversation.updateOne({
-      members: newMembers.map(member => new Types.ObjectId(member))
-    })
+    await this.conversationModel.updateOne(
+      {
+        _id: new Types.ObjectId(conversationId)
+      },
+      {
+        $set: {
+          members: newMembers.map(member => new Types.ObjectId(member))
+        }
+      }
+    )
 
     const newMessage = await this.messageService.createMessage(
       userId,
