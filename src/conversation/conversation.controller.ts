@@ -141,14 +141,15 @@ export class ConversationController {
     @GetUserRequest() user: UserDocument,
     @Body() addMembersDto: AddMembersDto
   ) {
-    await this.consversationService.addMembers(
+    const members = await this.consversationService.addMembers(
       convIdParam.conversationId,
       user._id,
       addMembersDto.members
     )
     return {
       success: true,
-      message: 'Add members successfully'
+      message: 'Add members successfully',
+      metadata: members
     }
   }
 
@@ -159,14 +160,15 @@ export class ConversationController {
     @GetUserRequest() user: UserDocument,
     @Body() removeMembersDto: RemoveMemberDto
   ) {
-    await this.consversationService.removeMembers(
+    const members = await this.consversationService.removeMembers(
       convIdParam.conversationId,
       user._id,
       removeMembersDto.memberId
     )
     return {
       success: true,
-      message: 'Remove members successfully'
+      message: 'Remove members successfully',
+      metadata: members
     }
   }
 
@@ -176,10 +178,14 @@ export class ConversationController {
     @Param() convIdParam: ConversationIdParam,
     @GetUserRequest() user: UserDocument
   ) {
-    await this.consversationService.leaveConversation(convIdParam.conversationId, user._id)
+    const members = await this.consversationService.leaveConversation(
+      convIdParam.conversationId,
+      user._id
+    )
     return {
       success: true,
-      message: 'Leave conversation successfully'
+      message: 'Leave conversation successfully',
+      metadata: members
     }
   }
 
@@ -190,14 +196,15 @@ export class ConversationController {
     @GetUserRequest() user: UserDocument,
     @Body() addAdminsDto: AddAdminDto
   ) {
-    await this.consversationService.addAdmins(
+    const admins = await this.consversationService.addAdmins(
       convIdParam.conversationId,
       user._id,
       addAdminsDto.memberId
     )
     return {
       success: true,
-      message: 'Add admins successfully'
+      message: 'Add admins successfully',
+      metadata: admins
     }
   }
 

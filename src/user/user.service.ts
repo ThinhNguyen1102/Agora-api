@@ -45,6 +45,13 @@ export class UserService {
         lastName: item.lastName,
         avatar: item.avatar,
         displayName: item.displayName,
+        isWaitingAccept: item.friendRequests.find(() => {
+          return item.friendRequests.find(
+            friendRequest => friendRequest.sender.toString() === userId.toString()
+          )
+        })
+          ? true
+          : false,
         mutualFriends: user.friends.filter(friend => {
           return item.friends.find(
             itemFriend => itemFriend['_id'].toString() === friend['_id'].toString()
@@ -87,6 +94,11 @@ export class UserService {
         firstName: item.firstName,
         lastName: item.lastName,
         avatar: item.avatar,
+        isWaitingAccept: item.friendRequests.find(() => {
+          return item.friendRequests.find(
+            friendRequest => friendRequest.sender.toString() === userId.toString()
+          )
+        }),
         mutualFriends: user.friends.filter(friend => {
           return item.friends.find(
             itemFriend => itemFriend['_id'].toString() === friend['_id'].toString()

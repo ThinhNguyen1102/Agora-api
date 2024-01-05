@@ -96,6 +96,10 @@ export class ConversationService {
         populate: {
           path: 'sender',
           select: BASIC_INFO_SELECT
+        },
+        options: {
+          limit: 50,
+          sort: { createdAt: -1 }
         }
       })
       .populate({
@@ -103,6 +107,10 @@ export class ConversationService {
         populate: {
           path: 'seenUsers',
           select: BASIC_INFO_SELECT
+        },
+        options: {
+          limit: 50,
+          sort: { createdAt: -1 }
         }
       })
       .sort({ lastMessageAt: -1 })
@@ -122,6 +130,10 @@ export class ConversationService {
         populate: {
           path: 'sender',
           select: BASIC_INFO_SELECT
+        },
+        options: {
+          limit: 50,
+          sort: { createdAt: -1 }
         }
       })
       .populate({
@@ -129,6 +141,10 @@ export class ConversationService {
         populate: {
           path: 'seenUsers',
           select: BASIC_INFO_SELECT
+        },
+        options: {
+          limit: 50,
+          sort: { createdAt: -1 }
         }
       })
 
@@ -298,6 +314,10 @@ export class ConversationService {
         populate: {
           path: 'sender',
           select: BASIC_INFO_SELECT
+        },
+        options: {
+          limit: 50,
+          sort: { createdAt: -1 }
         }
       })
 
@@ -351,12 +371,11 @@ export class ConversationService {
       this.pusherService.trigger(member, 'conversation:update', {
         tag: ConversationTag.ADD_MEMBERS,
         conversationId,
-        // members: newMembers.map(member => new Types.ObjectId(member))
         members: conversation.members
       })
     })
 
-    return true
+    return conversation.members
   }
 
   async removeMembers(conversationId: string, userId: Types.ObjectId, memberId: string) {
@@ -417,7 +436,7 @@ export class ConversationService {
       })
     })
 
-    return true
+    return newMembers
   }
 
   async leaveConversation(conversationId: string, userId: Types.ObjectId) {
@@ -481,7 +500,7 @@ export class ConversationService {
       })
     })
 
-    return true
+    return newMembers
   }
 
   async addAdmins(conversationId: string, userId: Types.ObjectId, adminId: string) {
@@ -540,7 +559,7 @@ export class ConversationService {
       })
     })
 
-    return true
+    return [...conversation.admins, admin]
   }
 
   async getAllImages(conversationId: string, userId: Types.ObjectId) {
