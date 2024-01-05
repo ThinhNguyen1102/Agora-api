@@ -44,9 +44,7 @@ export class UserService {
         firstName: item.firstName,
         lastName: item.lastName,
         avatar: item.avatar,
-        // mutualFriends: _.uniqWith([...item.friends, ...user.friends], (a, b) => {
-        //   return a['_id'].toString() === b['_id'].toString()
-        // })
+        displayName: item.displayName,
         mutualFriends: user.friends.filter(friend => {
           return item.friends.find(
             itemFriend => itemFriend['_id'].toString() === friend['_id'].toString()
@@ -84,6 +82,7 @@ export class UserService {
     strangers = strangers.map(item => {
       return {
         _id: item['_id'],
+        displayName: item.displayName,
         email: item.email,
         firstName: item.firstName,
         lastName: item.lastName,
