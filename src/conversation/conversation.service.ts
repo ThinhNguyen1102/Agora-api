@@ -301,9 +301,11 @@ export class ConversationService {
         }
       })
 
-    const members = await this.userModel.find({
-      _id: { $in: memberIds.map(memberId => new Types.ObjectId(memberId)) }
-    })
+    const members = await this.userModel
+      .find({
+        _id: { $in: memberIds.map(memberId => new Types.ObjectId(memberId)) }
+      })
+      .select(BASIC_INFO_SELECT)
 
     if (!conversation) {
       throw new BadRequestException('Invalid conversation or permission denied')
@@ -349,7 +351,8 @@ export class ConversationService {
       this.pusherService.trigger(member, 'conversation:update', {
         tag: ConversationTag.ADD_MEMBERS,
         conversationId,
-        members: newMembers.map(member => new Types.ObjectId(member))
+        // members: newMembers.map(member => new Types.ObjectId(member))
+        members: conversation.members
       })
     })
 
@@ -357,11 +360,13 @@ export class ConversationService {
   }
 
   async removeMembers(conversationId: string, userId: Types.ObjectId, memberId: string) {
-    const conversation = await this.conversationModel.findOne({
-      _id: new Types.ObjectId(conversationId),
-      admins: { $in: [userId] },
-      members: { $in: [new Types.ObjectId(memberId)] }
-    })
+    const conversation = await this.conversationModel
+      .findOne({
+        _id: new Types.ObjectId(conversationId),
+        admins: { $in: [userId] },
+        members: { $in: [new Types.ObjectId(memberId)] }
+      })
+      .populate('members', BASIC_INFO_SELECT)
 
     const member = await this.userModel.findOne({ _id: new Types.ObjectId(memberId) })
 
@@ -378,14 +383,14 @@ export class ConversationService {
     }
 
     const newMembers = conversation.members.filter(member => {
-      if (!(member.toString() !== memberId)) {
-        this.pusherService.trigger(member.toString(), 'conversation:update', {
+      if (!(member['_id'].toString() !== memberId)) {
+        this.pusherService.trigger(member['id'].toString(), 'conversation:update', {
           tag: ConversationTag.IS_LEAVE_CONVERSATION,
           conversationId
         })
       }
 
-      return member.toString() !== memberId
+      return member['_id'].toString() !== memberId
     })
 
     const result = await conversation.updateOne({
@@ -405,7 +410,7 @@ export class ConversationService {
     }
 
     newMembers.forEach(member => {
-      this.pusherService.trigger(member.toString(), 'conversation:update', {
+      this.pusherService.trigger(member['id'].toString(), 'conversation:update', {
         tag: ConversationTag.REMOVE_MEMBERS,
         conversationId,
         members: newMembers
@@ -416,10 +421,12 @@ export class ConversationService {
   }
 
   async leaveConversation(conversationId: string, userId: Types.ObjectId) {
-    const conversation = await this.conversationModel.findOne({
-      _id: new Types.ObjectId(conversationId),
-      members: { $in: [userId] }
-    })
+    const conversation = await this.conversationModel
+      .findOne({
+        _id: new Types.ObjectId(conversationId),
+        members: { $in: [userId] }
+      })
+      .populate('members', BASIC_INFO_SELECT)
 
     if (!conversation) {
       throw new BadRequestException('Invalid conversation')
@@ -437,14 +444,14 @@ export class ConversationService {
     }
 
     const newMembers = conversation.members.filter(member => {
-      if (!(member.toString() !== userId.toString())) {
-        this.pusherService.trigger(member.toString(), 'conversation:update', {
+      if (!(member['id'].toString() !== userId.toString())) {
+        this.pusherService.trigger(member['id'].toString(), 'conversation:update', {
           tag: ConversationTag.IS_LEAVE_CONVERSATION,
           conversationId
         })
       }
 
-      return member.toString() !== userId.toString()
+      return member['id'].toString() !== userId.toString()
     })
 
     const result = await conversation.updateOne({
@@ -467,7 +474,7 @@ export class ConversationService {
     }
 
     newMembers.forEach(member => {
-      this.pusherService.trigger(member.toString(), 'conversation:update', {
+      this.pusherService.trigger(member['id'].toString(), 'conversation:update', {
         tag: ConversationTag.LEAVE_CONVERSATION,
         conversationId,
         members: newMembers
@@ -482,13 +489,17 @@ export class ConversationService {
       throw new BadRequestException('Cannot add yourself')
     }
 
-    const conversation = await this.conversationModel.findOne({
-      _id: new Types.ObjectId(conversationId),
-      admins: { $in: [userId] },
-      members: { $in: [new Types.ObjectId(adminId)] }
-    })
+    const conversation = await this.conversationModel
+      .findOne({
+        _id: new Types.ObjectId(conversationId),
+        admins: { $in: [userId] },
+        members: { $in: [new Types.ObjectId(adminId)] }
+      })
+      .populate('admins', BASIC_INFO_SELECT)
 
-    const admin = await this.userModel.findOne({ _id: new Types.ObjectId(adminId) })
+    const admin = await this.userModel
+      .findOne({ _id: new Types.ObjectId(adminId) })
+      .select(BASIC_INFO_SELECT)
 
     if (!conversation) {
       throw new BadRequestException('Invalid conversation or permission denied')
@@ -498,7 +509,7 @@ export class ConversationService {
       throw new BadRequestException('Invalid conversation')
     }
 
-    if (conversation.admins.some(admin => admin.toString() === adminId.toString())) {
+    if (conversation.admins.some(admin => admin['_id'].toString() === adminId)) {
       throw new BadRequestException('User is already an admin')
     }
 
@@ -522,10 +533,10 @@ export class ConversationService {
     )
 
     conversation.members.forEach(member => {
-      this.pusherService.trigger(member.toString(), 'conversation:update', {
+      this.pusherService.trigger(member['_id'].toString(), 'conversation:update', {
         tag: ConversationTag.UPDATE_ADMINS,
         conversationId,
-        admins: [...conversation.admins, new Types.ObjectId(adminId)]
+        admins: [...conversation.admins, admin]
       })
     })
 

@@ -15,7 +15,10 @@ export class UserService {
 
   //get all user with mongoose
   async getAllUser(): Promise<any> {
-    return await this.userModel.find()
+    return await this.userModel
+      .find()
+      .populate('friends', BASIC_INFO_SELECT)
+      .populate('friendRequests.sender', BASIC_INFO_SELECT)
   }
 
   async getCurrUser(userId: Types.ObjectId): Promise<any> {
@@ -23,12 +26,77 @@ export class UserService {
       .findById(userId)
       .populate('friends', BASIC_INFO_SELECT)
       .populate('friendRequests.sender', BASIC_INFO_SELECT)
+      .lean()
+
+    const allUser = await this.userModel.find().populate('friends', BASIC_INFO_SELECT)
+
+    let strangers: any[] = allUser.filter(item => {
+      return (
+        item['_id'].toString() !== userId.toString() &&
+        !user.friends.find(friend => friend['_id'].toString() === item['_id'].toString())
+      )
+    })
+
+    strangers = strangers.map(item => {
+      return {
+        _id: item['_id'],
+        email: item.email,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        avatar: item.avatar,
+        // mutualFriends: _.uniqWith([...item.friends, ...user.friends], (a, b) => {
+        //   return a['_id'].toString() === b['_id'].toString()
+        // })
+        mutualFriends: user.friends.filter(friend => {
+          return item.friends.find(
+            itemFriend => itemFriend['_id'].toString() === friend['_id'].toString()
+          )
+        })
+      }
+    })
 
     if (!user) {
       throw new NotFoundException('User not found')
     }
 
-    return user
+    return {
+      ...user,
+      strangers: strangers
+    }
+  }
+
+  async getStrangres(userId: Types.ObjectId): Promise<any> {
+    const user = await this.userModel.findById(userId).populate('friends', BASIC_INFO_SELECT).lean()
+
+    const allUser = await this.userModel.find().populate('friends', BASIC_INFO_SELECT)
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    let strangers: any[] = allUser.filter(item => {
+      return (
+        item['_id'].toString() !== userId.toString() &&
+        !user.friends.find(friend => friend['_id'].toString() === item['_id'].toString())
+      )
+    })
+
+    strangers = strangers.map(item => {
+      return {
+        _id: item['_id'],
+        email: item.email,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        avatar: item.avatar,
+        mutualFriends: user.friends.filter(friend => {
+          return item.friends.find(
+            itemFriend => itemFriend['_id'].toString() === friend['_id'].toString()
+          )
+        })
+      }
+    })
+
+    return strangers
   }
 
   async updateAvatar(userId: Types.ObjectId, avatar: string): Promise<any> {

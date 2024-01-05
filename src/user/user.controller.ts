@@ -47,6 +47,17 @@ export class UserController {
     }
   }
 
+  @Get('me/strangers')
+  async getStrangres(@GetUserRequest() user: UserDocument): Promise<any> {
+    const strangers = await this.userService.getStrangres(user._id)
+
+    return {
+      success: true,
+      message: 'Get strangers successfully',
+      metadata: strangers
+    }
+  }
+
   @Get('search')
   @Public(true)
   async search(@Query('keyword') query: string) {

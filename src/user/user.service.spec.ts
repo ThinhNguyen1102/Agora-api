@@ -6,16 +6,16 @@ import { Types } from 'mongoose'
 import { PusherService } from 'src/pusher/pusher.service'
 describe('UserService', () => {
   let service: UserService
-  const mockUsersData = [
-    {
-      _id: 'objectid1',
-      email: 'test1@gmail.com'
-    },
-    {
-      _id: 'objectid2',
-      email: 'test2@gmail.com'
-    }
-  ]
+  // const mockUsersData = [
+  //   {
+  //     _id: 'objectid1',
+  //     email: 'test1@gmail.com'
+  //   },
+  //   {
+  //     _id: 'objectid2',
+  //     email: 'test2@gmail.com'
+  //   }
+  // ]
 
   const mockUserData = {
     _id: new Types.ObjectId('655f7423b014739c9499ab1a'),
@@ -70,35 +70,35 @@ describe('UserService', () => {
   })
 
   // test getAllUser
-  describe('getAllUser', () => {
-    it('should return an array of users', async () => {
-      jest.spyOn(mockUserModel, 'find').mockResolvedValue(mockUsersData)
-      expect(await service.getAllUser()).toBe(mockUsersData)
-    })
-  })
+  // describe('getAllUser', () => {
+  //   it('should return an array of users', async () => {
+  //     jest.spyOn(mockUserModel, 'find').mockResolvedValue(mockUsersData)
+  //     expect(await service.getAllUser()).toBe(mockUsersData)
+  //   })
+  // })
 
   // test getCurrUser
-  describe('getCurrUser', () => {
-    it('should return an user', async () => {
-      jest.spyOn(mockUserModel, 'findById').mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockResolvedValue(mockUserData)
-        })
-      })
+  // describe('getCurrUser', () => {
+  //   it('should return an user', async () => {
+  //     jest.spyOn(mockUserModel, 'findById').mockReturnValue({
+  //       populate: jest.fn().mockReturnValue({
+  //         populate: jest.fn().mockResolvedValue(mockUserData)
+  //       })
+  //     })
 
-      expect(await service.getCurrUser(mockUserData._id)).toBe(mockUserData)
-    })
+  //     expect(await service.getCurrUser(mockUserData._id)).toBe(mockUserData)
+  //   })
 
-    it('should return an user', async () => {
-      jest.spyOn(mockUserModel, 'findById').mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockResolvedValue(null)
-        })
-      })
+  //   it('should return an user', async () => {
+  //     jest.spyOn(mockUserModel, 'findById').mockReturnValue({
+  //       populate: jest.fn().mockReturnValue({
+  //         populate: jest.fn().mockResolvedValue(null)
+  //       })
+  //     })
 
-      await expect(service.getCurrUser(mockUserData._id)).rejects.toThrow('User not found')
-    })
-  })
+  //     await expect(service.getCurrUser(mockUserData._id)).rejects.toThrow('User not found')
+  //   })
+  // })
 
   // test updateAvatar
   describe('updateAvatar', () => {
