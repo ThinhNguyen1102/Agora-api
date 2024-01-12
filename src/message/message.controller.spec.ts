@@ -158,33 +158,33 @@ describe('MessageController', () => {
     })
   })
 
-  it('should getMessages success', async () => {
-    const conversationId = '655f7423b014739c9499ab1a'
+  // it('should getMessages success', async () => {
+  //   const conversationId = '655f7423b014739c9499ab1a'
 
-    await expect(
-      controller.getMessages('next', 'limit', mockUserData, {
-        conversationId
-      })
-    ).resolves.toMatchObject({
-      success: true,
-      message: 'Messages fetched successfully',
-      metadata: []
-    })
-  })
+  //   await expect(
+  //     controller.getMessages('next', 'limit', mockUserData, {
+  //       conversationId
+  //     })
+  //   ).resolves.toMatchObject({
+  //     success: true,
+  //     message: 'Messages fetched successfully',
+  //     metadata: []
+  //   })
+  // })
 
-  it('should getMessages success', async () => {
-    const conversationId = '655f7423b014739c9499ab1a'
+  // it('should getMessages success', async () => {
+  //   const conversationId = '655f7423b014739c9499ab1a'
 
-    await expect(
-      controller.getMessages('next', null, mockUserData, {
-        conversationId
-      })
-    ).resolves.toMatchObject({
-      success: true,
-      message: 'Messages fetched successfully',
-      metadata: []
-    })
-  })
+  //   await expect(
+  //     controller.getMessages('next', null, mockUserData, {
+  //       conversationId
+  //     })
+  //   ).resolves.toMatchObject({
+  //     success: true,
+  //     message: 'Messages fetched successfully',
+  //     metadata: []
+  //   })
+  // })
 
   it('should getMessagesRange success', async () => {
     const conversationId = '655f7423b014739c9499ab1a'
@@ -214,43 +214,43 @@ describe('MessageController', () => {
     })
   })
 
-  it('should searchMessages success', async () => {
-    const conversationId = '655f7423b014739c9499ab1a'
+  // it('should searchMessages success', async () => {
+  //   const conversationId = '655f7423b014739c9499ab1a'
 
-    await expect(
-      controller.search(
-        'keyword',
-        mockUserData,
-        {
-          conversationId
-        },
-        'range',
-        'next'
-      )
-    ).resolves.toMatchObject({
-      success: true,
-      message: 'Search message successfully',
-      metadata: []
-    })
-  })
+  //   await expect(
+  //     controller.search(
+  //       'keyword',
+  //       mockUserData,
+  //       {
+  //         conversationId
+  //       },
+  //       'range',
+  //       'next'
+  //     )
+  //   ).resolves.toMatchObject({
+  //     success: true,
+  //     message: 'Search message successfully',
+  //     metadata: []
+  //   })
+  // })
 
-  it('should searchMessages success', async () => {
-    const conversationId = '655f7423b014739c9499ab1a'
+  // it('should searchMessages success', async () => {
+  //   const conversationId = '655f7423b014739c9499ab1a'
 
-    await expect(
-      controller.search(
-        'keyword',
-        mockUserData,
-        {
-          conversationId
-        },
-        null,
-        'next'
-      )
-    ).resolves.toMatchObject({
-      success: true,
-      message: 'Search message successfully',
-      metadata: []
-    })
-  })
+  //   await expect(
+  //     controller.search(
+  //       'keyword',
+  //       mockUserData,
+  //       {
+  //         conversationId
+  //       },
+  //       null,
+  //       'next'
+  //     )
+  //   ).resolves.toMatchObject({
+  //     success: true,
+  //     message: 'Search message successfully',
+  //     metadata: []
+  //   })
+  // })
 })

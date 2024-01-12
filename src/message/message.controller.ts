@@ -108,14 +108,18 @@ export class MessageController {
   async getMessages(
     @Query('next') next: string,
     @Query('limit') limit: string,
+    @Query('direction') direction: string,
     @GetUserRequest() user: UserDocument,
     @Param() convIdParam: ConversationIdParam
   ) {
+    if (!direction) direction = 'down'
+
     const messages = await this.messageService.getMessages(
       user._id,
       convIdParam.conversationId,
       next,
-      limit ? parseInt(limit) : 10
+      limit ? parseInt(limit) : 10,
+      direction as 'up' | 'down'
     )
     return {
       success: true,
@@ -149,20 +153,12 @@ export class MessageController {
   async search(
     @Query('keyword') query: string,
     @GetUserRequest() user: UserDocument,
-    @Param() convIdParam: ConversationIdParam,
-    @Query('range') range: string,
-    @Query('next') next: string
+    @Param() convIdParam: ConversationIdParam
   ) {
     return {
       success: true,
       message: 'Search message successfully',
-      metadata: await this.messageService.search(
-        user._id,
-        query,
-        convIdParam.conversationId,
-        next,
-        range ? parseInt(range) : 25
-      )
+      metadata: await this.messageService.search(user._id, query, convIdParam.conversationId)
     }
   }
 }
