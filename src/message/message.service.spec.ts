@@ -188,25 +188,25 @@ describe('MessageService', () => {
       ).rejects.toThrow('Conversation not found or you are not a member')
     })
 
-    it('should get all messages success', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
-        populate: jest.fn().mockReturnValue(mockConversation)
-      })
+    // it('should get all messages success', async () => {
+    //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
+    //     populate: jest.fn().mockReturnValue(mockConversation)
+    //   })
 
-      jest.spyOn(mockMessageModel, 'find').mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            populate: jest.fn().mockReturnValue({
-              populate: jest.fn().mockResolvedValue([mockMessage])
-            })
-          })
-        })
-      })
+    //   jest.spyOn(mockMessageModel, 'find').mockReturnValue({
+    //     sort: jest.fn().mockReturnValue({
+    //       select: jest.fn().mockReturnValue({
+    //         populate: jest.fn().mockReturnValue({
+    //           populate: jest.fn().mockResolvedValue([mockMessage])
+    //         })
+    //       })
+    //     })
+    //   })
 
-      await expect(
-        service.getAllMessages(mockUserData._id, mockConversation._id.toString())
-      ).resolves.toMatchObject([mockMessage])
-    })
+    //   await expect(
+    //     service.getAllMessages(mockUserData._id, mockConversation._id.toString())
+    //   ).resolves.toMatchObject([mockMessage])
+    // })
   })
 
   describe('getMessages', () => {

@@ -85,7 +85,6 @@ export class MessageService {
         }
       })
       .sort({ _id: -1 })
-      .select('_id content images createdAt')
       .populate('sender', BASIC_INFO_SELECT)
       .populate('seenUsers', BASIC_INFO_SELECT)
 
