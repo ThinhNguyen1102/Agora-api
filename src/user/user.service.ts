@@ -178,21 +178,45 @@ export class UserService {
       }
     })
 
-    const friendRequest = {
+    const friendRequests = {
       sender: user._id,
-      message: message ? message : undefined
+      message: message ? message : undefined,
+      createdAt: Date.now()
+    }
+
+    const sentRequests = {
+      receiver: friend._id,
+      message: message ? message : undefined,
+      createdAt: Date.now()
     }
 
     await friend.updateOne({
       $push: {
-        friendRequests: friendRequest
+        friendRequests: friendRequests
+      }
+    })
+
+    await user.updateOne({
+      $push: {
+        sentRequests: sentRequests
       }
     })
 
     // push event to friend
     this.pusherService.trigger(friendId, 'friend:request', {
       tag: FriendTag.ADD_FRIEND,
-      friendRequest
+      userInfo: {
+        sender: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          displayName: user.displayName,
+          avatar: user.avatar
+        },
+        message: 'Hello, I want to be your friend',
+        createdAt: friendRequests.createdAt
+      }
     })
 
     return true
@@ -229,6 +253,11 @@ export class UserService {
     await friend.updateOne({
       $push: {
         friends: user._id
+      },
+      $pull: {
+        sentRequests: {
+          receiver: user._id
+        }
       }
     })
 
@@ -239,6 +268,8 @@ export class UserService {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
+        email: user.email,
+        displayName: user.displayName,
         avatar: user.avatar
       }
     })
@@ -256,6 +287,8 @@ export class UserService {
       throw new BadRequestException('Invalid input')
     }
 
+    const friend = await this.userModel.findById(friendId)
+
     const friendRequest = user.friendRequests.find(item => item.sender.toString() === friendId)
 
     if (!friendRequest) {
@@ -266,6 +299,14 @@ export class UserService {
       $pull: {
         friendRequests: {
           sender: new Types.ObjectId(friendId)
+        }
+      }
+    })
+
+    await friend.updateOne({
+      $pull: {
+        sentRequests: {
+          receiver: user._id
         }
       }
     })
@@ -296,6 +337,14 @@ export class UserService {
       $pull: {
         friendRequests: {
           sender: user._id
+        }
+      }
+    })
+
+    await user.updateOne({
+      $pull: {
+        sentRequests: {
+          receiver: friend._id
         }
       }
     })

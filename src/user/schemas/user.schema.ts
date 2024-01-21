@@ -73,6 +73,18 @@ export class User {
     default: []
   })
   friendRequests: [any]
+
+  @Prop({
+    type: [
+      {
+        receiver: { type: Types.ObjectId, ref: User.name },
+        message: { type: String, default: 'Hello, I want to be your friend' },
+        createdAt: { type: Date, default: Date.now }
+      }
+    ],
+    default: []
+  })
+  sentRequests: [any]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

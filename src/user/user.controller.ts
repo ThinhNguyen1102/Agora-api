@@ -95,7 +95,10 @@ export class UserController {
 
       return {
         success: true,
-        message: 'Upload avatar successfully'
+        message: 'Upload avatar successfully',
+        metadata: {
+          url: cloudFile.secure_url
+        }
       }
     } catch (err) {
       throw new InternalServerErrorException('Error when upload file')
