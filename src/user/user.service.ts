@@ -221,7 +221,18 @@ export class UserService {
       }
     })
 
-    return true
+    return {
+      receiver: {
+        _id: friend._id,
+        firstName: friend.firstName,
+        lastName: friend.lastName,
+        email: friend.email,
+        displayName: friend.displayName,
+        avatar: friend.avatar
+      },
+      message: 'Hello, I want to be your friend',
+      createAt: new Date(sentRequests.createdAt).toISOString()
+    }
   }
 
   async acceptFriend(user: UserDocument, { userId: friendId }: FriendIdDto) {

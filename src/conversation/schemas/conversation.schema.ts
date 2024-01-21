@@ -29,6 +29,19 @@ export class Conversation {
 
   @Prop({ isRequired: false })
   thumb: string
+
+  @Prop({
+    type: [
+      {
+        user: { type: Types.ObjectId, ref: User.name },
+        isHidden: { type: Boolean, default: true },
+        hiddenAt: { type: Date, default: Date.now }
+      }
+    ],
+    default: [],
+    _id: false
+  })
+  hiddenUsers: [any]
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Conversation)

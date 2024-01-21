@@ -108,11 +108,12 @@ export class UserController {
   @Post('add-friend')
   @UsePipes(ValidationPipe)
   async addFriend(@GetUserRequest() user: UserDocument, @Body() addFriendto: AddFrienDto) {
-    await this.userService.addFriend(user, addFriendto)
+    const sentRequest = await this.userService.addFriend(user, addFriendto)
 
     return {
       success: true,
-      message: 'Add friend successfully'
+      message: 'Add friend successfully',
+      metadata: sentRequest
     }
   }
 

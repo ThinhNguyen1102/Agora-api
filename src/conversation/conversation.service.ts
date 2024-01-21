@@ -701,7 +701,7 @@ export class ConversationService {
       })
       if (hasSeen) return prev
 
-      prev.push(lastMessage)
+      prev.push(conversation._id)
       return prev
     }, [])
 
@@ -744,6 +744,43 @@ export class ConversationService {
       members: newMembers,
       admins: newAdmin
     })
+
+    return true
+  }
+
+  async hiddenConversation(conversationId: string, userId: Types.ObjectId) {
+    const conversation = await this.conversationModel.findOne({
+      _id: new Types.ObjectId(conversationId),
+      members: { $in: [userId] }
+    })
+
+    if (!conversation) {
+      throw new BadRequestException('Invalid conversation')
+    }
+
+    const hiddenUser = conversation.hiddenUsers.find(user => {
+      return user.user['_id'].toString() === userId.toString()
+    })
+
+    if (hiddenUser) {
+      await conversation.updateOne({
+        $set: {
+          hiddenUsers: {
+            user: userId,
+            isHidden: true,
+            hiddenAt: new Date()
+          }
+        }
+      })
+    } else {
+      await conversation.updateOne({
+        $push: {
+          hiddenUsers: {
+            user: userId
+          }
+        }
+      })
+    }
 
     return true
   }
