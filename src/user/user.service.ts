@@ -19,6 +19,7 @@ export class UserService {
       .find()
       .populate('friends', BASIC_INFO_SELECT)
       .populate('friendRequests.sender', BASIC_INFO_SELECT)
+      .populate('sentRequests.receiver', BASIC_INFO_SELECT)
   }
 
   async getCurrUser(userId: Types.ObjectId): Promise<any> {
@@ -26,6 +27,7 @@ export class UserService {
       .findById(userId)
       .populate('friends', BASIC_INFO_SELECT)
       .populate('friendRequests.sender', BASIC_INFO_SELECT)
+      .populate('sentRequests.receiver', BASIC_INFO_SELECT)
       .lean()
 
     const allUser = await this.userModel.find().populate('friends', BASIC_INFO_SELECT)

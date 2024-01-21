@@ -256,4 +256,22 @@ export class ConversationController {
       metadata: await this.consversationService.getNotSeenMessage(user._id)
     }
   }
+
+  @Patch('leave-per/:conversationId')
+  async leavePerConversation(
+    @GetUserRequest() user: UserDocument,
+    @Param() convIdParam: ConversationIdParam,
+    @Body('friendId') friendId: string
+  ) {
+    await this.consversationService.leavePerConversation(
+      convIdParam.conversationId,
+      user._id,
+      friendId
+    )
+
+    return {
+      success: true,
+      message: 'leave conversation successfully'
+    }
+  }
 }

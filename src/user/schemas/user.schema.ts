@@ -70,7 +70,8 @@ export class User {
         createdAt: { type: Date, default: Date.now }
       }
     ],
-    default: []
+    default: [],
+    _id: false
   })
   friendRequests: [any]
 
@@ -82,7 +83,8 @@ export class User {
         createdAt: { type: Date, default: Date.now }
       }
     ],
-    default: []
+    default: [],
+    _id: false
   })
   sentRequests: [any]
 }

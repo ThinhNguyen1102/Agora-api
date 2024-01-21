@@ -707,4 +707,44 @@ export class ConversationService {
 
     return notSeenMessages
   }
+
+  async leavePerConversation(conversationId: string, userId: Types.ObjectId, friendId: string) {
+    const conversation = await this.conversationModel.findOne({
+      _id: new Types.ObjectId(conversationId),
+      members: { $in: [userId, friendId] }
+    })
+
+    if (!conversation) {
+      throw new BadRequestException('Invalid conversation')
+    }
+
+    if (conversation.isGroup) {
+      throw new BadRequestException('Invalid conversation')
+    }
+
+    // const newMembers = conversation.members.filter(member => {
+    //   if (!(member['_id'].toString() !== userId.toString())) {
+    //     this.pusherService.trigger(member['_id'].toString(), 'conversation:update', {
+    //       tag: ConversationTag.IS_LEAVE_CONVERSATION,
+    //       conversationId: conversation['_id'].toString()
+    //     })
+    //   }
+
+    //   return member['_id'].toString() !== userId.toString()
+    // })
+
+    const newMembers = conversation.members.filter(member => {
+      return member['_id'].toString() !== userId.toString()
+    })
+    const newAdmin = conversation.admins.filter(admin => {
+      return admin['_id'].toString() !== userId.toString()
+    })
+
+    await conversation.updateOne({
+      members: newMembers,
+      admins: newAdmin
+    })
+
+    return true
+  }
 }
