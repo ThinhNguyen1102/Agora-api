@@ -9,8 +9,6 @@ import { CloudinaryService, ImageType } from 'src/cloudinary/cloudinary.service'
 import { CreateConvDto, UpdateInfoConvDto } from './dto'
 import { MessageService } from 'src/message/message.service'
 
-const DEFAULT_LIMIT = 20
-
 @Injectable()
 export class ConversationService {
   constructor(
@@ -94,29 +92,29 @@ export class ConversationService {
         $and: [{ members: { $in: [userId] } }]
       })
       .lean()
-      .populate('members', BASIC_INFO_SELECT)
-      .populate({
-        path: 'messages',
-        populate: {
-          path: 'sender',
+      .populate([
+        {
+          path: 'members',
           select: BASIC_INFO_SELECT
         },
-        options: {
-          limit: DEFAULT_LIMIT,
-          sort: { createdAt: -1 }
+        {
+          path: 'messages',
+          options: {
+            // limit: DEFAULT_LIMIT
+            sort: { createdAt: -1 }
+          },
+          populate: [
+            {
+              path: 'sender',
+              select: BASIC_INFO_SELECT
+            },
+            {
+              path: 'seenUsers',
+              select: BASIC_INFO_SELECT
+            }
+          ]
         }
-      })
-      .populate({
-        path: 'messages',
-        populate: {
-          path: 'seenUsers',
-          select: BASIC_INFO_SELECT
-        },
-        options: {
-          limit: DEFAULT_LIMIT,
-          sort: { createdAt: -1 }
-        }
-      })
+      ])
       .sort({ lastMessageAt: -1 })
 
     conversations = conversations.map(conversation => {
@@ -145,29 +143,29 @@ export class ConversationService {
         _id: new Types.ObjectId(conversationId),
         members: { $in: [userId] }
       })
-      .populate('members', BASIC_INFO_SELECT)
-      .populate({
-        path: 'messages',
-        populate: {
-          path: 'sender',
+      .populate([
+        {
+          path: 'members',
           select: BASIC_INFO_SELECT
         },
-        options: {
-          limit: DEFAULT_LIMIT,
-          sort: { createdAt: -1 }
+        {
+          path: 'messages',
+          options: {
+            // limit: DEFAULT_LIMIT
+            sort: { createdAt: -1 }
+          },
+          populate: [
+            {
+              path: 'sender',
+              select: BASIC_INFO_SELECT
+            },
+            {
+              path: 'seenUsers',
+              select: BASIC_INFO_SELECT
+            }
+          ]
         }
-      })
-      .populate({
-        path: 'messages',
-        populate: {
-          path: 'seenUsers',
-          select: BASIC_INFO_SELECT
-        },
-        options: {
-          limit: DEFAULT_LIMIT,
-          sort: { createdAt: -1 }
-        }
-      })
+      ])
 
     if (!conversation) {
       throw new BadRequestException('Invalid conversation or permission denied')
@@ -337,7 +335,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          limit: DEFAULT_LIMIT,
+          // limit: DEFAULT_LIMIT,
           sort: { createdAt: -1 }
         }
       })
@@ -393,7 +391,7 @@ export class ConversationService {
     conversation.messages.push(newMessage)
 
     memberIds.forEach(member => {
-      this.pusherService.trigger(member, 'conversation:new', conversation)
+      this.pusherService.trigger(member, 'conversation:new', conversation._id)
     })
 
     oldMember.forEach(member => {

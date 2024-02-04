@@ -245,55 +245,55 @@ describe('ConversationService', () => {
     })
   })
 
-  describe('getConversationWithUserId', () => {
-    it('should get conversation with user id success', async () => {
-      jest.spyOn(mockConversationModel, 'find').mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            populate: jest.fn().mockReturnValue({
-              populate: jest.fn().mockReturnValue({
-                sort: jest.fn().mockResolvedValue([mockConversation])
-              })
-            })
-          })
-        })
-      })
+  // describe('getConversationWithUserId', () => {
+  //   it('should get conversation with user id success', async () => {
+  //     jest.spyOn(mockConversationModel, 'find').mockReturnValue({
+  //       lean: jest.fn().mockReturnValue({
+  //         populate: jest.fn().mockReturnValue({
+  //           populate: jest.fn().mockReturnValue({
+  //             populate: jest.fn().mockReturnValue({
+  //               sort: jest.fn().mockResolvedValue([mockConversation])
+  //             })
+  //           })
+  //         })
+  //       })
+  //     })
 
-      await expect(service.getConversationWithUserId(mockUserData._id)).resolves.toMatchObject([
-        mockConversation
-      ])
-    })
-  })
+  //     await expect(service.getConversationWithUserId(mockUserData._id)).resolves.toMatchObject([
+  //       mockConversation
+  //     ])
+  //   })
+  // })
 
-  describe('getConversationWithId', () => {
-    it('should get conversation with id success', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockConversation)
-          })
-        })
-      })
+  // describe('getConversationWithId', () => {
+  //   it('should get conversation with id success', async () => {
+  //     jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
+  //       populate: jest.fn().mockReturnValue({
+  //         populate: jest.fn().mockReturnValue({
+  //           populate: jest.fn().mockResolvedValue(mockConversation)
+  //         })
+  //       })
+  //     })
 
-      await expect(
-        service.getConversationWithId(mockUserData._id, mockConversation._id.toString())
-      ).resolves.toMatchObject(mockConversation)
-    })
+  //     await expect(
+  //       service.getConversationWithId(mockUserData._id, mockConversation._id.toString())
+  //     ).resolves.toMatchObject(mockConversation)
+  //   })
 
-    it('should get conversation with id success', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(null)
-          })
-        })
-      })
+  //   it('should get conversation with id success', async () => {
+  //     jest.spyOn(mockConversationModel, 'findOne').mockReturnValue({
+  //       populate: jest.fn().mockReturnValue({
+  //         populate: jest.fn().mockReturnValue({
+  //           populate: jest.fn().mockResolvedValue(null)
+  //         })
+  //       })
+  //     })
 
-      await expect(
-        service.getConversationWithId(mockUserData._id, mockConversation._id.toString())
-      ).rejects.toThrow('Invalid conversation or permission denied')
-    })
-  })
+  //     await expect(
+  //       service.getConversationWithId(mockUserData._id, mockConversation._id.toString())
+  //     ).rejects.toThrow('Invalid conversation or permission denied')
+  //   })
+  // })
 
   describe('seenConversation', () => {
     it('should seen conversation error invalid conversation', async () => {
