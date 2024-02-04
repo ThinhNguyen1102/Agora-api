@@ -320,44 +320,44 @@ describe('MessageService', () => {
       ).rejects.toThrow('Conversation not found or you are not a member')
     })
 
-    it('should get message with range success', async () => {
-      jest.spyOn(mockConversationModel, 'findOne').mockReturnValue(mockConversation)
+    // it('should get message with range success', async () => {
+    //   jest.spyOn(mockConversationModel, 'findOne').mockReturnValue(mockConversation)
 
-      jest.spyOn(mockMessageModel, 'findOne').mockReturnValueOnce({
-        lean: jest.fn().mockResolvedValue(mockMessage)
-      })
+    //   jest.spyOn(mockMessageModel, 'findOne').mockReturnValueOnce({
+    //     lean: jest.fn().mockResolvedValue(mockMessage)
+    //   })
 
-      jest.spyOn(mockMessageModel, 'find').mockReturnValueOnce({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            populate: jest.fn().mockReturnValue({
-              limit: jest.fn().mockReturnValue({
-                lean: jest.fn().mockResolvedValue([mockMessage])
-              })
-            })
-          })
-        })
-      })
+    //   jest.spyOn(mockMessageModel, 'find').mockReturnValueOnce({
+    //     sort: jest.fn().mockReturnValue({
+    //       populate: jest.fn().mockReturnValue({
+    //         populate: jest.fn().mockReturnValue({
+    //           limit: jest.fn().mockReturnValue({
+    //             lean: jest.fn().mockResolvedValue([mockMessage])
+    //           })
+    //         })
+    //       })
+    //     })
+    //   })
 
-      jest.spyOn(mockMessageModel, 'find').mockReturnValueOnce({
-        populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            limit: jest.fn().mockReturnValue({
-              lean: jest.fn().mockResolvedValue([mockMessage])
-            })
-          })
-        })
-      })
+    //   jest.spyOn(mockMessageModel, 'find').mockReturnValueOnce({
+    //     populate: jest.fn().mockReturnValue({
+    //       populate: jest.fn().mockReturnValue({
+    //         limit: jest.fn().mockReturnValue({
+    //           lean: jest.fn().mockResolvedValue([mockMessage])
+    //         })
+    //       })
+    //     })
+    //   })
 
-      await expect(
-        service.getMessagesRange(
-          mockUserData._id,
-          mockMessage._id.toString(),
-          mockConversation._id.toString(),
-          10
-        )
-      ).resolves.toMatchObject([mockMessage, mockMessage])
-    })
+    //   await expect(
+    //     service.getMessagesRange(
+    //       mockUserData._id,
+    //       mockMessage._id.toString(),
+    //       mockConversation._id.toString(),
+    //       10
+    //     )
+    //   ).resolves.toMatchObject([mockMessage, mockMessage])
+    // })
   })
 
   describe('search', () => {

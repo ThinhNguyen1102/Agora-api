@@ -42,7 +42,7 @@ export class ConversationService {
         this.pusherService.trigger(
           member['_id'].toString(),
           'conversation:new',
-          newGroupConversation
+          newGroupConversation._id
         )
       })
 
@@ -79,7 +79,7 @@ export class ConversationService {
       this.pusherService.trigger(
         member['_id'].toString(),
         'conversation:new',
-        newSingleConversation
+        newSingleConversation._id
       )
     })
 
