@@ -130,16 +130,13 @@ export class MessageService {
       .populate('sender', BASIC_INFO_SELECT)
       .populate('seenUsers', BASIC_INFO_SELECT)
 
-    // console.log(conversation)
-    // console.log(messages.length)
-
     conversation.hiddenUsers.forEach(hiddenUser => {
-      if (hiddenUser.user['_id'].toString() === userId.toString() && !hiddenUser.isHidden) {
-        messages = messages.filter(message => {
-          return message['createdAt'] > hiddenUser.hiddenAt
-        })
-      } else {
-        messages = []
+      if (hiddenUser.user['_id'].toString() === userId.toString()) {
+        messages = !hiddenUser.isHidden
+          ? messages.filter(message => {
+              return message['createdAt'] > hiddenUser.hiddenAt
+            })
+          : []
       }
     })
 
@@ -254,10 +251,12 @@ export class MessageService {
     }
 
     conversation.hiddenUsers.forEach(hiddenUser => {
-      if (hiddenUser.user['_id'].toString() === userId.toString() && !hiddenUser.isHidden) {
-        messages = messages.filter(message => {
-          return message['createdAt'] > hiddenUser.hiddenAt
-        })
+      if (hiddenUser.user['_id'].toString() === userId.toString()) {
+        messages = !hiddenUser.isHidden
+          ? messages.filter(message => {
+              return message['createdAt'] > hiddenUser.hiddenAt
+            })
+          : []
       }
     })
 
