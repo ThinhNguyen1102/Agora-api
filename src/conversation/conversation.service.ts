@@ -42,7 +42,7 @@ export class ConversationService {
         this.pusherService.trigger(
           member['_id'].toString(),
           'conversation:new',
-          newGroupConversation._id
+          newGroupConversation
         )
       })
 
@@ -79,7 +79,7 @@ export class ConversationService {
       this.pusherService.trigger(
         member['_id'].toString(),
         'conversation:new',
-        newSingleConversation._id
+        newSingleConversation
       )
     })
 
@@ -87,35 +87,42 @@ export class ConversationService {
   }
 
   async getConversationWithUserId(userId: Types.ObjectId) {
-    let conversations = await this.conversationModel
-      .find({
-        $and: [{ members: { $in: [userId] } }]
-      })
-      .lean()
-      .populate([
-        {
-          path: 'members',
-          select: BASIC_INFO_SELECT
-        },
-        {
-          path: 'messages',
-          options: {
-            // limit: DEFAULT_LIMIT
-            sort: { createdAt: -1 }
+    const convIds = await this.conversationModel.find({
+      members: { $in: [userId] }
+    })
+
+    const promises = convIds.map(convId => {
+      return this.conversationModel
+        .findOne({
+          _id: convId['_id']
+        })
+        .populate([
+          {
+            path: 'members',
+            select: BASIC_INFO_SELECT
           },
-          populate: [
-            {
-              path: 'sender',
-              select: BASIC_INFO_SELECT
+          {
+            path: 'messages',
+            options: {
+              limit: 20,
+              sort: { createdAt: -1 }
             },
-            {
-              path: 'seenUsers',
-              select: BASIC_INFO_SELECT
-            }
-          ]
-        }
-      ])
-      .sort({ lastMessageAt: -1 })
+            populate: [
+              {
+                path: 'sender',
+                select: BASIC_INFO_SELECT
+              },
+              {
+                path: 'seenUsers',
+                select: BASIC_INFO_SELECT
+              }
+            ]
+          }
+        ])
+        .sort({ lastMessageAt: -1 })
+    })
+
+    let conversations: Conversation[] = await Promise.all(promises)
 
     conversations = conversations.map(conversation => {
       if (conversation.hiddenUsers?.length > 0) {
@@ -151,7 +158,7 @@ export class ConversationService {
         {
           path: 'messages',
           options: {
-            // limit: DEFAULT_LIMIT
+            limit: 20,
             sort: { createdAt: -1 }
           },
           populate: [
@@ -335,7 +342,7 @@ export class ConversationService {
           select: BASIC_INFO_SELECT
         },
         options: {
-          // limit: DEFAULT_LIMIT,
+          limit: 20,
           sort: { createdAt: -1 }
         }
       })
@@ -391,7 +398,7 @@ export class ConversationService {
     conversation.messages.push(newMessage)
 
     memberIds.forEach(member => {
-      this.pusherService.trigger(member, 'conversation:new', conversation._id)
+      this.pusherService.trigger(member, 'conversation:new', conversation)
     })
 
     oldMember.forEach(member => {
