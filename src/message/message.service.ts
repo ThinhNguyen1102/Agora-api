@@ -183,7 +183,7 @@ export class MessageService {
       throw new BadRequestException('Conversation not found or you are not a member')
     }
 
-    const oldMessages = await this.messageModel
+    let oldMessages = await this.messageModel
       .find({
         conversationId,
         _id: {
@@ -198,6 +198,16 @@ export class MessageService {
       .populate('seenUsers', BASIC_INFO_SELECT)
       .limit(range)
       .lean()
+
+    conversation.hiddenUsers.forEach(hiddenUser => {
+      if (hiddenUser.user['_id'].toString() === userId.toString()) {
+        oldMessages = !hiddenUser.isHidden
+          ? oldMessages.filter(message => {
+              return message['createdAt'] > hiddenUser.hiddenAt
+            })
+          : []
+      }
+    })
 
     const newMessages = await this.messageModel
       .find({
