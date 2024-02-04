@@ -274,4 +274,17 @@ export class ConversationController {
       message: 'leave conversation successfully'
     }
   }
+
+  @Patch('hidden/:conversationId')
+  async hiddenConversation(
+    @GetUserRequest() user: UserDocument,
+    @Param() convIdParam: ConversationIdParam
+  ) {
+    await this.consversationService.hiddenConversation(convIdParam.conversationId, user._id)
+
+    return {
+      success: true,
+      message: 'leave conversation successfully'
+    }
+  }
 }

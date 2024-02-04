@@ -49,7 +49,8 @@ export class MessageService {
 
     await conversation.updateOne({
       $set: {
-        lastMessageAt: new Date()
+        lastMessageAt: new Date(),
+        'hiddenUsers.$[].isHidden': false
       },
       $push: {
         messages: newMessage._id
@@ -122,12 +123,25 @@ export class MessageService {
           : { ...filter, _id: { $gt: new Types.ObjectId(next) } }
     }
 
-    const messages = await this.messageModel
+    let messages = await this.messageModel
       .find(filter)
       .sort({ createdAt: direction === 'up' ? -1 : 1 })
       .limit(limit)
       .populate('sender', BASIC_INFO_SELECT)
       .populate('seenUsers', BASIC_INFO_SELECT)
+
+    // console.log(conversation)
+    // console.log(messages.length)
+
+    conversation.hiddenUsers.forEach(hiddenUser => {
+      if (hiddenUser.user['_id'].toString() === userId.toString() && !hiddenUser.isHidden) {
+        messages = messages.filter(message => {
+          return message['createdAt'] > hiddenUser.hiddenAt
+        })
+      } else {
+        messages = []
+      }
+    })
 
     return messages
   }
@@ -216,7 +230,7 @@ export class MessageService {
       throw new BadRequestException('Conversation not found or you are not a member')
     }
 
-    const messages = await this.messageModel
+    let messages = await this.messageModel
       .find({
         conversationId,
         content: {
@@ -238,6 +252,14 @@ export class MessageService {
         total: messages.length
       }
     }
+
+    conversation.hiddenUsers.forEach(hiddenUser => {
+      if (hiddenUser.user['_id'].toString() === userId.toString() && !hiddenUser.isHidden) {
+        messages = messages.filter(message => {
+          return message['createdAt'] > hiddenUser.hiddenAt
+        })
+      }
+    })
 
     // const oldMessages = await this.messageModel
     //   .find({

@@ -89,8 +89,10 @@ export class ConversationService {
   }
 
   async getConversationWithUserId(userId: Types.ObjectId) {
-    const conversations = await this.conversationModel
-      .find({ members: { $in: [userId] } })
+    let conversations = await this.conversationModel
+      .find({
+        $and: [{ members: { $in: [userId] } }]
+      })
       .lean()
       .populate('members', BASIC_INFO_SELECT)
       .populate({
@@ -116,6 +118,23 @@ export class ConversationService {
         }
       })
       .sort({ lastMessageAt: -1 })
+
+    conversations = conversations.map(conversation => {
+      if (conversation.hiddenUsers?.length > 0) {
+        let newConversation = conversation
+        conversation.hiddenUsers.forEach(hiddenUser => {
+          if (hiddenUser.user['_id'].toString() === userId.toString()) {
+            newConversation = {
+              ...newConversation,
+              messages: conversation.messages.filter(message => {
+                return message['createdAt'] > hiddenUser['hiddenAt']
+              })
+            }
+          }
+        })
+        return newConversation
+      } else return conversation
+    })
 
     return conversations
   }
